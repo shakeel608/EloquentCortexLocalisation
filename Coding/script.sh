@@ -4,23 +4,25 @@
 ## Resource Request
 #SBATCH --job-name=ECD
 #SBATCH --output=ecd_results.out
-#SBATCH --time=1-00:10:00
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=500M
-
+#SBATCH --ntasks=1  ## number of tasks (analyses) to run
+#SBATCH --gpus-per-task=1 # number of gpus per task
+#SBATCH --mem-per-gpu=100M # Memory allocated for the job
+#SBATCH --time=0-00:30:00 
 ## Job Steps
 
-srun echo "Start process"
+srun echo "Start training with gpu node"
 ## Displays computing node name
-srun echo "computing node is below" 
+##srun echo "computing node is mentioned below" 
+srun echo "*****Computing Node******" 
 srun hostname
+srun echo "*****Computing Node******" 
 
 ##Load the python interpreter
 ##module load python
 
+source activate monai_ecd
 #srun python script.py 90
 
-srun python main.py
-
-srun echo "End process"
+srun python /homes/ssheikh/postdoc_work/Coding/src/main.py
+##srun python script.py 90
+srun echo "End training"
