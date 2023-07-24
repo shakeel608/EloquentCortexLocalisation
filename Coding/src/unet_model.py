@@ -15,8 +15,8 @@ class UNet3D(nn.Module):
                 in_channels=1,
                 out_channels=1,
                 channels=(16, 32, 64, 128, 256),
-                strides=(2, 2, 2, 2)
-                #num_res_units=2,
+                strides=(2, 2, 2, 2),
+                num_res_units=2,
                 )
         #self.fc = nn.Linear(45,4)
 

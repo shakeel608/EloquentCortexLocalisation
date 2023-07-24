@@ -11,16 +11,17 @@ from monai.data import create_test_image_3d, list_data_collate, decollate_batch
 import nibabel as nib
 import numpy as np
 from monai.data import  DataLoader
-
+from dict2csv import list_of_dicts_to_csv
 
 class ECDLoader():
-    def __init__(self, num_samples, path):
+    def __init__(self, num_samples, path, SEED):
         """
         num_saampls: Generate num_samples of 3D volumetric images
         """
 
         self.num_samples = num_samples
         self.path = path
+        self.SEED = SEED
 
     def generate_3d_data(self, tempdir):
         """Synthetic Dataset"""
@@ -41,8 +42,9 @@ class ECDLoader():
         segs = sorted(glob(os.path.join(tempdir, "seg*.nii.gz")))
         train_files = [{"img": img, "seg": seg} for img, seg in zip(images[:int(self.num_samples*0.8)], segs[:int(self.num_samples*0.8)])]
         val_files = [{"img": img, "seg": seg} for img, seg in zip(images[-int(self.num_samples*0.8):], segs[-int(self.num_samples*0.8):])]
+        test_files = [{"img": img, "seg": seg} for img, seg in zip(images[-int(self.num_samples*0.8):], segs[-int(self.num_samples*0.8):])]
 
-        return train_files, val_files
+        return train_files, val_files, test_files
 
 
     def load_BraTsTumorData(self):
@@ -59,16 +61,31 @@ class ECDLoader():
         images = sorted(glob(os.path.join(img_dir, "BraTS*.nii.gz")))
         segs = sorted(glob(os.path.join(label_dir, "*seg.nii.gz")))
 
-        print(len(images), len(segs))
+        #print(images[:10], "\n\n\n", segs[:10])
+
+        """For Reproducibility and generating same Dataset Partitions"""
+        #import random 
+        #combined = list(zip(images, segs))
+        #random.seed(self.SEED)
+        #print("SEED",self.SEED)
+        #random.shuffle(combined)
+        #images, segs = zip(*combined)
+
+        #print(images[:10], "\n\n\n", segs[:10])
         #exit(0)
 
         train_files = [{"img": img, "seg": seg} for img, seg in zip(images[:int(len(segs)*0.8)], segs[:int(len(segs)*0.8)])]
-        val_files = [{"img": img, "seg": seg} for img, seg in zip(images[int(len(segs)*0.8):], segs[int(len(segs)*0.8):])]
-
+        val_files = [{"img": img, "seg": seg} for img, seg in zip(images[int(len(segs)*0.8):int(len(segs)*0.9)], segs[int(len(segs)*0.8):int(len(segs)*0.9)])]
+        test_files = [{"img": img, "seg": seg} for img, seg in zip(images[int(len(segs)*0.9):], segs[int(len(segs)*0.9):])]
+        
+        list_of_dicts_to_csv(test_files, 'test_files.csv')
+        #print(test_files); 
+        #exit(0)
+        #print(len(train_files), len(val_files), len(test_files)); exit(0)
         #trainData, trainSeg = images[:int(len(segs)*0.8)], segs[:int(len(segs)*0.8)] 
         #valData, valSeg = images[int(len(segs)*0.8):], segs[int(len(segs)*0.8):] 
         #return trainData, trainSeg, valData, valSeg
-        return train_files, val_files
+        return train_files, val_files, test_files
 
 
 
