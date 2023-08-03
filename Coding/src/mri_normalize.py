@@ -25,7 +25,7 @@ class PreprocessMRI():
         #self.mri2graph()
         self.mri_to_graph = MRI2Graph(self.modality, self.mod_path, self.dataset_mean, self.dataset_std, self.num_nodes)
         self.mri_to_graph.mri2graph()
-        exit(0)
+        #exit(0)
 
 
 
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     cla_parser.add_argument('-out', '--out_dir', default="", help='Output Directory, type=str')
     cla_parser.add_argument('-mod','--modality', nargs="+", default=["_flair.nii.gz","_t1.nii.gz","_t1ce.nii.gz","_t2.nii.gz"],help="Modality Type FLAIR, T1, T1CE or T2.")
     cla_parser.add_argument('-mri_prefix','--mri_prefix', help="A main directory 'BraTS2023' which contains other sub modalities ")
-    cla_parser.add_argument('-nn','--num_nodes', default=15000,  help="Number of Nodes in a Graph")
+    cla_parser.add_argument('-nn','--num_nodes', default=300,  help="Number of Nodes in a Graph")
     
     args = cla_parser.parse_args()
     preprocess = PreprocessMRI(args)
