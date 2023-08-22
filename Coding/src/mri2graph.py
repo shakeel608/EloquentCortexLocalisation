@@ -22,10 +22,12 @@ class MRI2Graph():
     def __init__(self, num_modalities, mod_path, mu, sigma, num_nodes):
         print("Status::>")
         self.num_modalities = num_modalities
+        print("Modalities", self.num_modalities[0])#;exit(0)
         self.mod_path = mod_path
         self.dataset_mu = mu
         self.dataset_sigma = sigma
         self.num_nodes = num_nodes   #approximate number of nodes
+        print("Slf NN", self.num_nodes)
         self.quantile_range = [0.10, 0.25, 0.50, 0.75, 0.90]
         self.K = 11
     """Computes quantiles of range 'quantile_range' based on SLIC partititon""" 
@@ -98,6 +100,7 @@ class MRI2Graph():
 
         else:
             node_features = ndimage.labeled_comprehension(mri, labels=nodes, func=self.compute_quantiles, index=range(1, num_nodes), out_dtype='object', default=-1.0)
+            print("Node Features", node_features.shape)
             node_features = np.stack(node_features, axis=0)
         print("Node Features", node_features.shape)
 
@@ -242,7 +245,7 @@ class MRI2Graph():
                 node_label = int(supervoxel_labels[nd])
                 graph.nodes[nd]['label'] = node_label
 
-        dst_dir = "generated_graphs_t2_sv_300_K_"+str(self.K)
+        dst_dir = "generated_graphs"+self.num_modalities[0].split(".")[0]+"_sv_nn_"+str(self.num_nodes)+"_K_"+str(self.K)
         #if os.path.exists(os.path.join(os.getcwd(), dst_dir)):
             #shutil.rmtree(dst_dir)
             #print("[Removing dst_dir from mri2graphy.py]")
@@ -270,7 +273,7 @@ class MRI2Graph():
         #exit(0)
 
     #Generates Adjacency Matrix. Weighted and Enforces Regularity
-    def construct_adj_matrix(self, node_features, node_centroids, K, weighted_adj=True, enforce_regularity = False, complete_adj_mat=True):
+    def construct_adj_matrix(self, node_features, node_centroids, K, weighted_adj=False, enforce_regularity = False, complete_adj_mat=True):
         """
         This function return adjacency matrix of the given super voxels/nodes
         """

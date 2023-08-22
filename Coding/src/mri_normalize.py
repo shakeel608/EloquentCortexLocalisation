@@ -15,7 +15,8 @@ class PreprocessMRI():
         self.standardize = True
         #print("Arguments", self.src_dir, self.modality, self.main_folder)
         self.mod_path = self.get_mri_paths()
-        self.num_nodes = args.num_nodes
+        self.num_nodes = int(args.num_nodes)
+        print("NN",self.num_nodes)
         #print("Modality", self.mod_path, list(self.mod_path.keys()))
         self.dataset_stats = self.extract_statistics()
         self.dataset_mean = np.array(self.dataset_stats[0], dtype=np.float32)
@@ -230,7 +231,7 @@ if __name__ == "__main__":
     cla_parser.add_argument('-out', '--out_dir', default="", help='Output Directory, type=str')
     cla_parser.add_argument('-mod','--modality', nargs="+", default=["_flair.nii.gz","_t1.nii.gz","_t1ce.nii.gz","_t2.nii.gz"],help="Modality Type FLAIR, T1, T1CE or T2.")
     cla_parser.add_argument('-mri_prefix','--mri_prefix', help="A main directory 'BraTS2023' which contains other sub modalities ")
-    cla_parser.add_argument('-nn','--num_nodes', default=300,  help="Number of Nodes in a Graph")
+    cla_parser.add_argument('-nn','--num_nodes', default=1000,  help="Number of Nodes in a Graph")
     
     args = cla_parser.parse_args()
     preprocess = PreprocessMRI(args)
